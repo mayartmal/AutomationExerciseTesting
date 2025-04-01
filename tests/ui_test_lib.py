@@ -15,6 +15,10 @@ def test_add_cookies(home_page):
     # for cookie in ALL_SAVED_COOKIES:
     #     home_page.driver.add_cookie(cookie)
 
+    # with requests
+    # response = requests.get(url, cookies=cookies)
+
+    # move to base page
     home_page.driver.add_cookie(SESSION_ID_COOKIE)
     home_page.driver.refresh()
     import time

@@ -1,3 +1,5 @@
+from pickle import FALSE
+
 import pytest
 from selenium import webdriver
 
@@ -10,11 +12,8 @@ from page_objects.home_page import HomePage
 
 
 # @pytest.fixture(scope="session", autouse=True)
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function", autouse=False)
 def init(request):
-    if "api" in request.node.keywords:
-        yield
-        return  # dont run init fixture
     options = webdriver.ChromeOptions()
     options.add_argument('--window-size=1920,1080')
     driver = webdriver.Chrome(options=options)
@@ -33,6 +32,14 @@ def abstract_page():
 @pytest.fixture
 def home_page():
     return HomePage()
+
+
+@pytest.fixture
+def home_page1():
+    a = HomePage()
+    a.driver = None
+    return
+
 #  как HP понимает, что надо тспользовать драйвер из init?
 
 # @pytest.fixture
