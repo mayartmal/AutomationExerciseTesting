@@ -3,12 +3,23 @@ from pickle import FALSE
 import pytest
 from selenium import webdriver
 
+from api_services.user_service import UserService
 from constants.applications import AUTOMATION_EXERCISE
 from page_objects.browser_wrapper import BrowserWrapper
 from page_objects.common_page import CommonPage
 # from page_objects.cart_page import CartPage
 from page_objects.home_page import HomePage
 # from page_objects.item_page import ItemPage
+
+
+
+
+
+@pytest.fixture
+def user_service():
+    return UserService()
+
+
 
 
 # @pytest.fixture(scope="session", autouse=True)
@@ -32,15 +43,6 @@ def abstract_page():
 @pytest.fixture
 def home_page():
     return HomePage()
-
-
-@pytest.fixture
-def home_page1():
-    a = HomePage()
-    a.driver = None
-    return
-
-#  как HP понимает, что надо тспользовать драйвер из init?
 
 # @pytest.fixture
 # def cart_page():
@@ -71,16 +73,3 @@ def switch_to_cart(request, home_page):
         home_page.go_to_cart()
     else:
         home_page.go_to_cart()
-
-
-# region obsolete fixtures
-# @pytest.fixture
-# def add_book_to_cart(request, home_page, cart_page):
-#     home_page.clear_browser()
-#     home_page.click_close_cookie_button()
-#     print(request.param[0])
-#     print(request.param[1])
-#     home_page.click_add_book_button(book_title=request.param[0])
-#     home_page.go_to_cart(in_the_new_tab=request.param[1])
-#     return request.param[0]
-# endregion
