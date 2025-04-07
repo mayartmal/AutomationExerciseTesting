@@ -74,3 +74,5 @@ ALL_SAVED_COOKIES = [
         'value': 'wRZhkm4DcgBm8a2Fb7IWnwqNVYHRoz9JqXCcOXdRSlkIMLzWf0sTt8RCdejMHj9l'
     }
 ]
+TEST_MAIL_DOMAIN = "@test.tt"
+TEST_USER_BASE_NAME = "user"

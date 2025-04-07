@@ -1,41 +1,48 @@
-from dataclasses import dataclass
-from http.client import responses
-from typing import Any
-
-import requests
-
-from utils.data_generator import generate_current_datetime_string
+from api_services.base_service import BaseService
 from constants.urls.endpoints import Endpoints
-from utils.factories import User, UniversalResponseData
+from factory.user_factory import UserFactory
 
 
-class UserService:
+class UserService(BaseService):
+
+    def __init__(self):
+        super().__init__()
+        self.factory = UserFactory()
 
     def create_user(self):
-        user = User.generate()
-        response = requests.post(url=Endpoints.BASE_URL + Endpoints.USER_CREATE_ACCOUNT, data=user.__dict__)
-        response_data = UniversalResponseData.build(user, response)
-        return response_data
+        payload = self.factory.generate_create_user_payload()
 
-    def delete_user(self, user):
-        response = requests.delete(url=Endpoints.BASE_URL + Endpoints.USER_DELETE, data=user.credentials())
-        response_data = UniversalResponseData.build(user, response)
-        return response_data
+        response = self.build_request(endpoint=Endpoints.USER_CREATE_ACCOUNT,
+                                  payload=payload,
+                                  expected_code=self.http_status.OK).post().response_json
+        return response, payload
 
-    def verify_user(self, user):
-        response = requests.get(url=Endpoints.BASE_URL + Endpoints.USER_GET_DETAILS, params=user.mail())
-        response_data = UniversalResponseData.build(user, response)
-        return response_data
 
-    def get_user_details(self, user):
-        response = requests.get(url=Endpoints.BASE_URL + Endpoints.USER_GET_DETAILS, params=user.mail())
-        response_data = UniversalResponseData.build(user, response)
-        return response_data
+    def verify_user(self):
+        return self.build_request(endpoint=Endpoints.USER_VERIFY,
+                                  payload=self.factory.get_latest_user_credentials_payload(),
+                                  expected_code=self.http_status.OK).post().response_json
 
-    def update_user_details(self, user, field_to_update, field_new_value):
-        credentials = user.credentials()
-        credentials[field_to_update] = field_new_value
-        data = credentials
-        response = requests.put(url=Endpoints.BASE_URL + Endpoints.USER_UPDATE_DETAILS, data=data)
-        response_data = UniversalResponseData.build(user, response)
-        return response_data
+    def delete_user(self):
+        return self.build_request(endpoint=Endpoints.USER_DELETE,
+                                  payload=self.factory.get_latest_user_credentials_payload(),
+                                  expected_code=self.http_status.OK).delete().response_json
+
+    def get_user_details(self):
+        return self.build_request(endpoint=Endpoints.USER_GET_DETAILS,
+                                  payload=self.factory.get_latest_user_email_payload(),
+                                  expected_code=self.http_status.OK).get().response_json
+
+    def update_user_details(self, field_to_update, field_new_value):
+        return self.build_request(endpoint=Endpoints.USER_UPDATE_DETAILS,
+                                  payload=self.factory.get_latest_user_credentials_with_updated_fields_payload(
+                                      field_to_update=field_to_update,
+                                      field_new_value=field_new_value),
+                                  expected_code=self.http_status.OK).put().response_json
+
+        # credentials = user.credentials()
+        # credentials[field_to_update] = field_new_value
+        # data = credentials
+        # response = requests.put(url=Endpoints.BASE_URL + Endpoints.USER_UPDATE_DETAILS, data=data)
+        # response_data = UniversalResponseData.build(user, response)
+
