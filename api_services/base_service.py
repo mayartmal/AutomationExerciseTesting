@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from constants.urls.endpoints import Endpoints
 from api_services.http_wrapper import HTTPWrapper
 from typing import Any
@@ -11,14 +13,17 @@ class BaseService(HTTPWrapper):
     """
     def __init__(self):
         super().__init__(base_url=Endpoints.BASE_URL)
+        self.expected_code = None
 
     def build_request(self,
                       endpoint: str,
                       payload: Any,
-                      expected_code: HTTPStatus):
+                      expected_code: HTTPStatus,
+                      decode_to: dataclass):
         self.request_parameters = RequestParameters(endpoint=endpoint,
                                                     payload=payload,
-                                                    expected_code=expected_code)
+                                                    expected_code=expected_code,
+                                                    decode_to=decode_to)
 
         # print(self.request_parameters)
         return self

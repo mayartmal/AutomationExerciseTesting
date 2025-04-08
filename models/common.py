@@ -1,7 +1,7 @@
-import json
-from dataclasses import dataclass, asdict, InitVar
+from dataclasses import dataclass, InitVar
 from http import HTTPStatus
 from typing import Any
+from http import HTTPStatus
 
 
 @dataclass
@@ -9,8 +9,7 @@ class RequestParameters:
     endpoint: str
     payload: Any
     expected_code: HTTPStatus
-
-
+    decode_to: dataclass
 
 
 @dataclass
@@ -38,7 +37,7 @@ class User:
 class Credentials:
     email: str = None
     password: str = None
-#     "PassWord1@"
+    # "PassWord1@"
 
 
 @dataclass
@@ -57,17 +56,40 @@ class CredentialsWithUpdates:
             setattr(self, dynamic_field[0], dynamic_field[1])
 
 
-# #     dynamic dataclass
-# @dataclass
-# class Foo:
-#     field1: InitVar[set]
-#
-#     def __post_init__(self, field1: set):
-#         setattr(self, field1[0], field1[1])
-
-#  create responses dataclasses
+@dataclass
+class GeneralResponse:
+    responseCode: HTTPStatus
+    message: str
 
 
 
 
+
+@dataclass
+class UserData:
+    id: int
+    name: str
+    email: str
+    title: str
+    birth_day: str
+    birth_month: str
+    birth_year: str
+    first_name: str
+    last_name: str
+    company: str
+    address1: str
+    address2: str
+    country: str
+    state: str
+    city: str
+    zipcode: str
+
+
+@dataclass
+class UserDataResponse:
+    responseCode: HTTPStatus
+    user: UserData
+
+    def __post_init__(self):
+        self.user = UserData(**self.user)
 
