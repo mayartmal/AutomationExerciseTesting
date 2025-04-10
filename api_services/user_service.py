@@ -12,37 +12,30 @@ class UserService(BaseService):
 
     def create_user(self):
         payload = self.factory.generate_create_user_payload()
-
         response = self.build_request(endpoint=Endpoints.USER_CREATE_ACCOUNT,
-                                    payload=payload,
-                                    expected_code=self.http_status.OK,
-                                    decode_to=GeneralResponse).post().response_json
+                                      payload=payload,
+                                      expected_code=self.http_status.OK,
+                                      decode_to=GeneralResponse).post().response_decoded
 
         return response, payload
-
 
     def verify_user(self):
         return self.build_request(endpoint=Endpoints.USER_VERIFY,
                                   payload=self.factory.get_latest_user_credentials_payload(),
                                   expected_code=self.http_status.OK,
-                                  decode_to=GeneralResponse).post().response_json
+                                  decode_to=GeneralResponse).post().response_decoded
 
     def delete_user(self):
         return self.build_request(endpoint=Endpoints.USER_DELETE,
                                   payload=self.factory.get_latest_user_credentials_payload(),
                                   expected_code=self.http_status.OK,
-                                  decode_to=GeneralResponse).delete().response_json
+                                  decode_to=GeneralResponse).delete().response_decoded
 
     def get_user_details(self):
-
-
-
-        result =  self.build_request(endpoint=Endpoints.USER_GET_DETAILS,
+        return self.build_request(endpoint=Endpoints.USER_GET_DETAILS,
                                   payload=self.factory.get_latest_user_email_payload(),
                                   expected_code=self.http_status.OK,
                                   decode_to=UserDataResponse).get().response_decoded
-
-        return result
 
     def update_user_details(self, field_to_update, field_new_value):
         return self.build_request(endpoint=Endpoints.USER_UPDATE_DETAILS,
@@ -50,11 +43,4 @@ class UserService(BaseService):
                                       field_to_update=field_to_update,
                                       field_new_value=field_new_value),
                                   expected_code=self.http_status.OK,
-                                  decode_to=GeneralResponse).put().response_json
-
-        # credentials = user.credentials()
-        # credentials[field_to_update] = field_new_value
-        # data = credentials
-        # response = requests.put(url=Endpoints.BASE_URL + Endpoints.USER_UPDATE_DETAILS, data=data)
-        # response_data = UniversalResponseData.build(user, response)
-
+                                  decode_to=GeneralResponse).put().response_decoded

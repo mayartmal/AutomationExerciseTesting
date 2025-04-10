@@ -1,5 +1,4 @@
 import json
-import os
 from dataclasses import asdict
 
 from constants.test import TEST_MAIL_DOMAIN, TEST_USER_BASE_NAME
@@ -12,11 +11,11 @@ class UserFactory:
 
     @staticmethod
     def generate_create_user_payload() -> User:
-       user_name = generate_user_name_with_time_postfix(TEST_USER_BASE_NAME)
-       email = f"{user_name}{TEST_MAIL_DOMAIN}"
-       user = User(name=user_name, email=email)
-       UserFactory.save_user_to_db(user=user)
-       return user
+        user_name = generate_user_name_with_time_postfix(TEST_USER_BASE_NAME)
+        email = f"{user_name}{TEST_MAIL_DOMAIN}"
+        user = User(name=user_name, email=email)
+        UserFactory.save_user_to_db(user=user)
+        return user
 
     @staticmethod
     def get_latest_user_credentials_payload() -> Credentials:
@@ -28,7 +27,8 @@ class UserFactory:
         return Email(email=UserFactory.get_latest_user_from_db().email)
 
     @staticmethod
-    def get_latest_user_credentials_with_updated_fields_payload(field_to_update: str, field_new_value: str) -> CredentialsWithUpdates:
+    def get_latest_user_credentials_with_updated_fields_payload(field_to_update: str,
+                                                                field_new_value: str) -> CredentialsWithUpdates:
         user = UserFactory.get_latest_user_from_db()
         setattr(user, field_to_update, field_new_value)
         UserFactory.save_user_to_db(user)
@@ -50,7 +50,3 @@ class UserFactory:
         users.append(asdict(user))
         with open(UserFactory.users_db_path, "w") as file:
             json.dump((users), file, indent=4)
-
-
-
-

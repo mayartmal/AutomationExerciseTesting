@@ -1,13 +1,11 @@
-import json
-import pickle
-from dataclasses import fields, dataclass
-from http.client import responses
+from dataclasses import dataclass
+from http import HTTPStatus
 from typing import Any
 
 import requests
-from http import HTTPStatus
-from models.common import RequestParameters, GeneralResponse
 from requests import Response
+
+from models.common import RequestParameters
 
 
 class HTTPWrapper:
@@ -27,12 +25,19 @@ class HTTPWrapper:
         self.expected_status_code = None
 
     def send_request(self, method: str):
+        """
+        Sends an HTTP request using the specified method and current request parameters
+
+        :param method: str - an HTTP method to use for request ('GET', 'POST'...)
+        :return: HTTPWrapper - The instance of HTTPWrapper for method chaining.
+
+        """
         url = f"{self.BASE_URL}{self.request_parameters.endpoint}"
         self.response_not_decoded = self.session.request(
-                                        method=method,
-                                        url=url,
-                                        params=self.request_parameters.payload.__dict__ if method == "GET" else None,
-                                        data=self.request_parameters.payload.__dict__ if method != "GET" else None)
+            method=method,
+            url=url,
+            params=self.request_parameters.payload.__dict__ if method == "GET" else None,
+            data=self.request_parameters.payload.__dict__ if method != "GET" else None)
         self.response_json = self.response_not_decoded.json()
         self.decoder(self.request_parameters.decode_to)
         self.assert_status_code(
@@ -40,7 +45,7 @@ class HTTPWrapper:
         return self
 
     def post(self):
-        return self.send_request(method = "POST")
+        return self.send_request(method="POST")
 
     def delete(self):
         return self.send_request(method="DELETE")
@@ -51,14 +56,8 @@ class HTTPWrapper:
     def put(self):
         return self.send_request(method="PUT")
 
-    def assert_status_code(self, expected_status_code):
+    def assert_status_code(self, expected_status_code: HTTPStatus):
         assert self.response_not_decoded.status_code == expected_status_code
 
     def decoder(self, target_data_class: dataclass):
         self.response_decoded = target_data_class(**self.response_not_decoded.json())
-
-    # def decoder(self, target_data_class: dataclass):
-    #     step1 = target_data_class(**self.response_not_decoded.json())
-    #     step1.user(**step1.get("user"))
-    #
-    #     self.response_decoded = target_data_class(**self.response_not_decoded.json())

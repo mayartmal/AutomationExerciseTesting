@@ -6,10 +6,12 @@ def test_api_works():
     response = requests.get(url)
     assert response.status_code == 200
 
+
 #  create and delete user in fixture (with yield)
 
 def test_create_verify_and_delete_user(user_service):
     response, user = user_service.create_user()
+    print(response)
     user_service.verify_user()
     user_service.delete_user()
     user_service.verify_user()

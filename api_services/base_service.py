@@ -1,16 +1,17 @@
 from dataclasses import dataclass
-
-from constants.urls.endpoints import Endpoints
-from api_services.http_wrapper import HTTPWrapper
-from typing import Any
 from http import HTTPStatus
+from typing import Any
+
+from api_services.http_wrapper import HTTPWrapper
+from constants.urls.endpoints import Endpoints
 from models.common import RequestParameters
 
 
 class BaseService(HTTPWrapper):
     """
-    A base class for API services that extends HTTPClient with predefined settings
+    A base class for API services that extends HTTPWrapper with predefined settings
     """
+
     def __init__(self):
         super().__init__(base_url=Endpoints.BASE_URL)
         self.expected_code = None
@@ -24,16 +25,14 @@ class BaseService(HTTPWrapper):
                                                     payload=payload,
                                                     expected_code=expected_code,
                                                     decode_to=decode_to)
-
-        # print(self.request_parameters)
         return self
 
     def not_found(self):
         self.expected_code = self.http_status.NOT_FOUND
         return self
+        #
         # yield self
         # self.expected_code = None
-
 
     def bad_request(self):
         #
@@ -42,4 +41,3 @@ class BaseService(HTTPWrapper):
     def default(self):
         self.expected_code = None
         return self
-

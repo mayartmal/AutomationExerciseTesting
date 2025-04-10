@@ -1,7 +1,6 @@
 from dataclasses import dataclass, InitVar
 from http import HTTPStatus
 from typing import Any
-from http import HTTPStatus
 
 
 @dataclass
@@ -62,9 +61,6 @@ class GeneralResponse:
     message: str
 
 
-
-
-
 @dataclass
 class UserData:
     id: int
@@ -92,4 +88,3 @@ class UserDataResponse:
 
     def __post_init__(self):
         self.user = UserData(**self.user)
-
