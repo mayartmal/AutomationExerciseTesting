@@ -1,12 +1,17 @@
+import json
+import logging
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Any
+from typing import Union
 
 import requests
 from requests import Response
 
-from models.common import RequestParameters
+from models.common import RequestParameters, GeneralResponse, UserDataResponse
+from utils.logger_config import get_logger
 
+
+logger = get_logger(__name__)
 
 class HTTPWrapper:
     """
@@ -20,9 +25,9 @@ class HTTPWrapper:
         self.session = requests.Session()
         self.request_parameters: RequestParameters = None
         self.response_not_decoded: Response = None
-        self.response_decoded: Any = None
-        self.response_json = None
+        self.response_decoded: Union[GeneralResponse, UserDataResponse] = None
         self.expected_status_code = None
+        self.deserialize: bool = True
 
     def send_request(self, method: str):
         """
@@ -33,15 +38,29 @@ class HTTPWrapper:
 
         """
         url = f"{self.BASE_URL}{self.request_parameters.endpoint}"
+        payload = self.request_parameters.payload
+        # region request logging
+        logger.info(f"---- Sending {method.upper()} request to {url} ----")
+        logger.info(f"Payload dataclass is {type(payload)}")
+        logger.info(f"Payload\n{json.dumps(payload.__dict__, indent=2)}")
+        # endregion
         self.response_not_decoded = self.session.request(
             method=method,
             url=url,
-            params=self.request_parameters.payload.__dict__ if method == "GET" else None,
-            data=self.request_parameters.payload.__dict__ if method != "GET" else None)
-        self.response_json = self.response_not_decoded.json()
-        self.decoder(self.request_parameters.decode_to)
+            params=payload.__dict__ if method == "GET" else None,
+            data=payload.__dict__ if method != "GET" else None)
+        if self.request_parameters.deserialize and self.deserialize:
+            self.deserialize_response(self.request_parameters.deserialize_to)
+        else:
+            self.response_decoded = self.response_not_decoded
         self.assert_status_code(
             expected_status_code=self.expected_status_code if self.expected_status_code else self.request_parameters.expected_code)
+        # region response logging
+        logger.info(f"---- Receiving response ----")
+        logger.info(f"Raw response is: {self.response_not_decoded}")
+        logger.info(f"Response body is: \n{json.dumps(self.response_not_decoded.json(), indent=2)}")
+        # endregion
+
         return self
 
     def post(self):
@@ -59,5 +78,5 @@ class HTTPWrapper:
     def assert_status_code(self, expected_status_code: HTTPStatus):
         assert self.response_not_decoded.status_code == expected_status_code
 
-    def decoder(self, target_data_class: dataclass):
+    def deserialize_response(self, target_data_class: dataclass):
         self.response_decoded = target_data_class(**self.response_not_decoded.json())

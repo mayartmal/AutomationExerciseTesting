@@ -1,7 +1,7 @@
 from api_services.base_service import BaseService
 from constants.urls.endpoints import Endpoints
 from factory.user_factory import UserFactory
-from models.common import GeneralResponse, UserDataResponse
+from models.common import GeneralResponse, UserDataResponse, User
 
 
 class UserService(BaseService):
@@ -16,30 +16,31 @@ class UserService(BaseService):
                                       payload=payload,
                                       expected_code=self.http_status.OK,
                                       decode_to=GeneralResponse).post().response_decoded
-
         return response, payload
 
-    def verify_user(self):
+    def verify_user(self, user: User):
         return self.build_request(endpoint=Endpoints.USER_VERIFY,
-                                  payload=self.factory.get_latest_user_credentials_payload(),
+                                  payload=self.factory.extract_user_credentials_payload(user=user),
                                   expected_code=self.http_status.OK,
                                   decode_to=GeneralResponse).post().response_decoded
 
-    def delete_user(self):
+    def delete_user(self, user: User):
         return self.build_request(endpoint=Endpoints.USER_DELETE,
-                                  payload=self.factory.get_latest_user_credentials_payload(),
+                                  payload=self.factory.extract_user_credentials_payload(user=user),
                                   expected_code=self.http_status.OK,
-                                  decode_to=GeneralResponse).delete().response_decoded
+                                  decode_to=GeneralResponse,
+                                  deserialize=False).delete().response_decoded
 
-    def get_user_details(self):
+    def get_user_details(self, user: User):
         return self.build_request(endpoint=Endpoints.USER_GET_DETAILS,
-                                  payload=self.factory.get_latest_user_email_payload(),
+                                  payload=self.factory.extract_user_email_payload(user=user),
                                   expected_code=self.http_status.OK,
                                   decode_to=UserDataResponse).get().response_decoded
 
-    def update_user_details(self, field_to_update, field_new_value):
+    def update_user_details(self, user: User, field_to_update: str, field_new_value: str):
         return self.build_request(endpoint=Endpoints.USER_UPDATE_DETAILS,
-                                  payload=self.factory.get_latest_user_credentials_with_updated_fields_payload(
+                                  payload=self.factory.update_user_payload(
+                                      user=user,
                                       field_to_update=field_to_update,
                                       field_new_value=field_new_value),
                                   expected_code=self.http_status.OK,

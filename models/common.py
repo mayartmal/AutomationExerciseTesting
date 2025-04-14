@@ -8,7 +8,8 @@ class RequestParameters:
     endpoint: str
     payload: Any
     expected_code: HTTPStatus
-    decode_to: dataclass
+    deserialize_to: dataclass
+    deserialize: bool
 
 
 @dataclass
