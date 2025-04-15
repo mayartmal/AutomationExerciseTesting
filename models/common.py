@@ -16,7 +16,7 @@ class RequestParameters:
 class User:
     name: str = None
     email: str = None
-    password: str = "12345678"
+    password: str = "PassWord1@"
     title: str = "Mr"
     birth_date: str = "3"
     birth_month: str = "2"

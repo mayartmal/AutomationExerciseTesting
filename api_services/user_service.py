@@ -18,11 +18,23 @@ class UserService(BaseService):
                                       decode_to=GeneralResponse).post().response_decoded
         return response, payload
 
-    def verify_user(self, user: User):
-        return self.build_request(endpoint=Endpoints.USER_VERIFY,
-                                  payload=self.factory.extract_user_credentials_payload(user=user),
-                                  expected_code=self.http_status.OK,
-                                  decode_to=GeneralResponse).post().response_decoded
+    def verify_user(self, user: User, overridden_password: str = None, delete_password=False, method: str = "post"):
+        if delete_password:
+            payload = self.factory.extract_user_email_payload(user=user)
+        else:
+            payload=self.factory.extract_user_credentials_payload(user=user, overridden_password=overridden_password)
+
+        request = self.build_request(endpoint=Endpoints.USER_VERIFY,
+                                      payload=payload,
+                                      expected_code=self.http_status.OK,
+                                      decode_to=GeneralResponse)
+        response = getattr(request, method)()
+        return response.response_decoded
+
+        # return self.build_request(endpoint=Endpoints.USER_VERIFY,
+        #                           payload=payload,
+        #                           expected_code=self.http_status.OK,
+        #                           decode_to=GeneralResponse).post().response_decoded
 
     def delete_user(self, user: User):
         return self.build_request(endpoint=Endpoints.USER_DELETE,

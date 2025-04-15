@@ -1,5 +1,9 @@
 from http import HTTPStatus
 
+class Common:
+    NEW_COMPANY = ["company", "new_work"]
+    BAD_PASSWORD = "bad_password"
+
 
 class UserRelated:
     TEST_MAIL_DOMAIN = "@test.tt"
@@ -9,12 +13,16 @@ class ExpectedCodes:
     CREATED = HTTPStatus.CREATED
     OK = HTTPStatus.OK
     NOT_FOUND = HTTPStatus.NOT_FOUND
+    BAD_REQUEST = HTTPStatus.BAD_REQUEST
+    UNSUPPORTED_METHOD = HTTPStatus.METHOD_NOT_ALLOWED
 
 
 class ExpectedMessages:
     USER_CREATED = "User created!"
     USER_EXIST = "User exists!"
-
+    USER_NOT_FOUND = "User not found!"
+    BAD_VERIFY_REQUEST = "Bad request, email or password parameter is missing in POST request."
+    UNSUPPORTED_METHOD = "This request method is not supported."
 
 # region obsolete
 

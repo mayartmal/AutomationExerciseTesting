@@ -14,7 +14,7 @@ class BaseService(HTTPWrapper):
 
     def __init__(self):
         super().__init__(base_url=Endpoints.BASE_URL)
-        self.expected_code = None
+        self.expected_status_code = None
 
     def build_request(self,
                       endpoint: str,
@@ -30,18 +30,20 @@ class BaseService(HTTPWrapper):
         return self
 
     def not_found(self):
-        self.expected_code = self.http_status.NOT_FOUND
+        self.expected_status_code = self.http_status.NOT_FOUND
         return self
 
-        # yield self
-        # self.expected_code = None
 
     def bad_request(self):
         #
         pass
 
     def default(self):
-        self.expected_code = None
+        self.expected_status_code = None
+        return self
+
+    def erase_password(self):
+        self.request_parameters.payload.password = "empty"
         return self
 
 

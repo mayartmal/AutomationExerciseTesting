@@ -13,8 +13,11 @@ class UserFactory:
         return user
 
     @staticmethod
-    def extract_user_credentials_payload(user: User):
-        return Credentials(email=user.email, password=user.password)
+    def extract_user_credentials_payload(user: User, overridden_password: str = None):
+        if overridden_password:
+            return Credentials(email=user.email, password=overridden_password)
+        else:
+            return Credentials(email=user.email, password=user.password)
 
     @staticmethod
     def extract_user_email_payload(user: User):

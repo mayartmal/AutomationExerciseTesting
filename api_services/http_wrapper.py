@@ -28,6 +28,7 @@ class HTTPWrapper:
         self.response_decoded: Union[GeneralResponse, UserDataResponse] = None
         self.expected_status_code = None
         self.deserialize: bool = True
+        self.password = None
 
     def send_request(self, method: str):
         """
@@ -40,9 +41,9 @@ class HTTPWrapper:
         url = f"{self.BASE_URL}{self.request_parameters.endpoint}"
         payload = self.request_parameters.payload
         # region request logging
-        logger.info(f"---- Sending {method.upper()} request to {url} ----")
-        logger.info(f"Payload dataclass is {type(payload)}")
-        logger.info(f"Payload\n{json.dumps(payload.__dict__, indent=2)}")
+        logger.debug(f"---- Sending {method.upper()} request to {url} ----")
+        logger.debug(f"Payload dataclass is {type(payload)}")
+        logger.debug(f"Payload\n{json.dumps(payload.__dict__, indent=2)}")
         # endregion
         self.response_not_decoded = self.session.request(
             method=method,
@@ -56,9 +57,9 @@ class HTTPWrapper:
         self.assert_status_code(
             expected_status_code=self.expected_status_code if self.expected_status_code else self.request_parameters.expected_code)
         # region response logging
-        logger.info(f"---- Receiving response ----")
-        logger.info(f"Raw response is: {self.response_not_decoded}")
-        logger.info(f"Response body is: \n{json.dumps(self.response_not_decoded.json(), indent=2)}")
+        logger.debug(f"---- Receiving response ----")
+        logger.debug(f"Raw response is: {self.response_not_decoded}")
+        logger.debug(f"Response body is: \n{json.dumps(self.response_not_decoded.json(), indent=2)}")
         # endregion
 
         return self
@@ -76,6 +77,7 @@ class HTTPWrapper:
         return self.send_request(method="PUT")
 
     def assert_status_code(self, expected_status_code: HTTPStatus):
+        logger.debug(f"ASSERTION {self.response_not_decoded.status_code} vs {expected_status_code}")
         assert self.response_not_decoded.status_code == expected_status_code
 
     def deserialize_response(self, target_data_class: dataclass):

@@ -14,16 +14,19 @@ from utils.logger_config import get_logger
 
 # region API tests
 
+
+
+
 logger = get_logger(__name__)
-BLUE = "\033[38;5;33m"
-RESET = "\033[0m"
+# logger = get_logger()
 
 @pytest.fixture(autouse=True)
 def log_test_start_and_end(request):
     test_name = request.node.name
-    logger.info(f"\n{BLUE}====================== START TEST: {test_name} ======================{RESET}")
+    # print()
+    logger.info(f"\n====================== START TEST: {test_name} ======================")
     yield
-    logger.info(f"\n{BLUE}======================= END TEST: {test_name} ======================={RESET}")
+    logger.info(f"\n======================= END TEST: {test_name} =======================")
 
 @pytest.fixture
 def user_service():
@@ -35,6 +38,7 @@ def create_and_clean_up_user(user_service):
     response, user = user_service.create_user()
     assert response.responseCode == ExpectedCodes.CREATED
     yield response, user
+    print()
     user_service.delete_user(user)
     response = user_service.verify_user(user)
     assert response.responseCode == ExpectedCodes.NOT_FOUND
