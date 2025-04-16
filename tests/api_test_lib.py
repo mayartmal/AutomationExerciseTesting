@@ -81,13 +81,12 @@ def test_verify_user_with_wrong_password(log_test_start_and_end, create_and_clea
     assert response.responseCode == ExpectedCodes.NOT_FOUND
     assert response.message == ExpectedMessages.USER_NOT_FOUND
 
-
+@pytest.mark.parametrize("create_and_clean_up_user", [Payloads.USER_VITUS_BERING], indirect=True)
 def test_verify_user_without_password(log_test_start_and_end, create_and_clean_up_user, user_service):
     # Given: a user has been successfully created
-    _, user = create_and_clean_up_user
 
     # When: we verify the user via the user service without password
-    response = user_service.verify_user(user=user, delete_password=True)
+    response = user_service.verify_user(credentials=Payloads.EMAIL_VITUS_BERING)
 
     # Then: the response should indicate the bad request
     assert response.responseCode == ExpectedCodes.BAD_REQUEST
