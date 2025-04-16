@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from models.common import Credentials, User, Email
 
 class Common:
     NEW_COMPANY = ["company", "new_work"]
@@ -23,6 +24,37 @@ class ExpectedMessages:
     USER_NOT_FOUND = "User not found!"
     BAD_VERIFY_REQUEST = "Bad request, email or password parameter is missing in POST request."
     UNSUPPORTED_METHOD = "This request method is not supported."
+
+class Payloads:
+    USER_VITUS_BERING = User(name="vitus_bering",
+                             email = "vitus_bering@kostava43.ge",
+                             password = "PassWord1@",
+                             title = "Mr",
+                             birth_date = "12",
+                             birth_month = "8",
+                             birth_year = "1981",
+                             firstname = "Vitus",
+                             lastname = "Bering",
+                             company = "UCS",
+                             address1 = "owl st. 11",
+                             address2 = "far st. 27",
+                             country = "India",
+                             zipcode = "0111",
+                             state = "ND",
+                             city = "ND",
+                             mobile_number = "555 111 333")
+
+    VALID_VITUS_BERING_CREDENTIALS = Credentials(email="vitus_bering@kostava43.ge",
+                                                 password="PassWord1@")
+
+    WRONG_PASSWORD_VITUS_BERING_CREDENTIALS = Credentials(email="vitus_bering@kostava43.ge",
+                                                          password="wrong_password")
+
+    EMAIL_VITUS_BERING = Email(email="vitus_bering@kostava43.ge")
+
+
+
+
 
 # region obsolete
 

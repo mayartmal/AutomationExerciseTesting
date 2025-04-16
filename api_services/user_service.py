@@ -1,7 +1,9 @@
+from typing import Optional
+
 from api_services.base_service import BaseService
 from constants.urls.endpoints import Endpoints
 from factory.user_factory import UserFactory
-from models.common import GeneralResponse, UserDataResponse, User
+from models.common import GeneralResponse, UserDataResponse, User, Credentials
 
 
 class UserService(BaseService):
@@ -10,31 +12,21 @@ class UserService(BaseService):
         super().__init__()
         self.factory = UserFactory()
 
-    def create_user(self):
-        payload = self.factory.generate_create_user_payload()
+    def create_user(self, user: Optional[User] = None):
+        payload = user if user else self.factory.generate_create_user_payload()
         response = self.build_request(endpoint=Endpoints.USER_CREATE_ACCOUNT,
                                       payload=payload,
                                       expected_code=self.http_status.OK,
                                       decode_to=GeneralResponse).post().response_decoded
         return response, payload
 
-    def verify_user(self, user: User, overridden_password: str = None, delete_password=False, method: str = "post"):
-        if delete_password:
-            payload = self.factory.extract_user_email_payload(user=user)
-        else:
-            payload=self.factory.extract_user_credentials_payload(user=user, overridden_password=overridden_password)
-
-        request = self.build_request(endpoint=Endpoints.USER_VERIFY,
-                                      payload=payload,
-                                      expected_code=self.http_status.OK,
-                                      decode_to=GeneralResponse)
-        response = getattr(request, method)()
-        return response.response_decoded
-
-        # return self.build_request(endpoint=Endpoints.USER_VERIFY,
-        #                           payload=payload,
-        #                           expected_code=self.http_status.OK,
-        #                           decode_to=GeneralResponse).post().response_decoded
+    def verify_user(self, user: Optional[User] = None, credentials: Optional[Credentials] = None):
+        assert user or credentials, "Either 'user' or 'credentials' must be provided"
+        payload = credentials if credentials else self.factory.extract_user_credentials_payload(user=user)
+        return self.build_request(endpoint=Endpoints.USER_VERIFY,
+                                  payload=payload,
+                                  expected_code=self.http_status.OK,
+                                  decode_to=GeneralResponse).post().response_decoded
 
     def delete_user(self, user: User):
         return self.build_request(endpoint=Endpoints.USER_DELETE,

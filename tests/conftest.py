@@ -1,4 +1,6 @@
 import logging
+from os.path import exists
+
 import pytest
 from selenium import webdriver
 
@@ -34,8 +36,9 @@ def user_service():
 
 
 @pytest.fixture()
-def create_and_clean_up_user(user_service):
-    response, user = user_service.create_user()
+def create_and_clean_up_user(request, user_service):
+    user = request.param if hasattr(request, "param") else None
+    response, user = user_service.create_user(user=user)
     assert response.responseCode == ExpectedCodes.CREATED
     yield response, user
     print()
