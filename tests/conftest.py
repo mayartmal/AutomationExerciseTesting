@@ -44,6 +44,7 @@ def create_and_clean_up_user(request, user_service):
     print()
     user_service.delete_user(user)
     response = user_service.verify_user(user)
+    logger.debug(f"{response.responseCode} vs {ExpectedCodes.NOT_FOUND}")
     assert response.responseCode == ExpectedCodes.NOT_FOUND
 
 

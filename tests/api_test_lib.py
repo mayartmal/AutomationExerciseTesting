@@ -98,7 +98,8 @@ def test_verify_user_with_wrong_method(log_test_start_and_end, create_and_clean_
     _, user = create_and_clean_up_user
 
     # When: we verify the user via the user service with delete method
-    response = user_service.verify_user(user=user, method="delete")
+    response = user_service.override_method_to(method="DELETE").verify_user(user=user)
+    user_service.reset_method()
 
     # Then: the response should indicate the unsupported method
     assert response.responseCode == ExpectedCodes.UNSUPPORTED_METHOD

@@ -2,7 +2,7 @@ import json
 import logging
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Union
+from typing import Union, Optional
 
 import requests
 from requests import Response
@@ -24,11 +24,12 @@ class HTTPWrapper:
         self.BASE_URL = base_url
         self.session = requests.Session()
         self.request_parameters: RequestParameters = None
-        self.response_not_decoded: Response = None
-        self.response_decoded: Union[GeneralResponse, UserDataResponse] = None
+        self.response_not_decoded: Optional[Response] = None
+        self.response_decoded: Optional[Union[GeneralResponse, UserDataResponse]] = None
         self.expected_status_code = None
         self.deserialize: bool = True
-        self.password = None
+        # self.password = None
+        self.method: Optional[str] = None
 
     def send_request(self, method: str):
         """
@@ -46,7 +47,8 @@ class HTTPWrapper:
         logger.debug(f"Payload\n{json.dumps(payload.__dict__, indent=2)}")
         # endregion
         self.response_not_decoded = self.session.request(
-            method=method,
+            method=self.method if self.method else method,
+            # method=method,
             url=url,
             params=payload.__dict__ if method == "GET" else None,
             data=payload.__dict__ if method != "GET" else None)

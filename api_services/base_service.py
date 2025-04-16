@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Optional
 
 from api_services.http_wrapper import HTTPWrapper
 from constants.urls.endpoints import Endpoints
@@ -14,7 +14,8 @@ class BaseService(HTTPWrapper):
 
     def __init__(self):
         super().__init__(base_url=Endpoints.BASE_URL)
-        self.expected_status_code = None
+        # self.expected_status_code = None
+        # self.method = None
 
     def build_request(self,
                       endpoint: str,
@@ -42,8 +43,17 @@ class BaseService(HTTPWrapper):
         self.expected_status_code = None
         return self
 
-    def erase_password(self):
-        self.request_parameters.payload.password = "empty"
+    def override_method_to(self, method: str):
+        self.method = method
         return self
+
+    def reset_method(self):
+        self.method = None
+        return self
+
+
+    # def erase_password(self):
+    #     self.request_parameters.payload.password = "empty"
+    #     return self
 
 
