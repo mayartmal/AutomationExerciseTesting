@@ -4,6 +4,7 @@ from os.path import exists
 import pytest
 from selenium import webdriver
 
+from api_services.brand_service import BrandService
 from api_services.user_service import UserService
 from constants.applications import AUTOMATION_EXERCISE
 from constants.test import ExpectedCodes
@@ -34,6 +35,9 @@ def log_test_start_and_end(request):
 def user_service():
     return UserService()
 
+@pytest.fixture
+def brand_service():
+    return BrandService()
 
 @pytest.fixture()
 def create_and_clean_up_user(request, user_service):
@@ -44,7 +48,7 @@ def create_and_clean_up_user(request, user_service):
     print()
     user_service.delete_user(user)
     response = user_service.verify_user(user)
-    logger.debug(f"{response.responseCode} vs {ExpectedCodes.NOT_FOUND}")
+    logger.debug(f" ASSERT Actual response code: {response.responseCode} vs Expected response code: {ExpectedCodes.NOT_FOUND}")
     assert response.responseCode == ExpectedCodes.NOT_FOUND
 
 

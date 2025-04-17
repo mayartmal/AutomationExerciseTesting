@@ -10,8 +10,9 @@ class Endpoints:
     USER_UPDATE_DETAILS = "/api/updateAccount"
     # endregion
 
-    # region Products
+    # region Brand
+    BRAND_GET_LIST = "/api/brandsList"
     # endregion
 
-    # region Brands
+    # region Products
     # endregion

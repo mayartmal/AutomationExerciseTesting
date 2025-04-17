@@ -2,7 +2,7 @@ import json
 import logging
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 import requests
 from requests import Response
@@ -27,6 +27,7 @@ class HTTPWrapper:
         self.response_not_decoded: Optional[Response] = None
         self.response_decoded: Optional[Union[GeneralResponse, UserDataResponse]] = None
         self.expected_status_code = None
+        self.deserialize_to: Any = None
         self.deserialize: bool = True
         # self.password = None
         self.method: Optional[str] = None
@@ -44,16 +45,18 @@ class HTTPWrapper:
         # region request logging
         logger.debug(f"---- Sending {method.upper()} request to {url} ----")
         logger.debug(f"Payload dataclass is {type(payload)}")
-        logger.debug(f"Payload\n{json.dumps(payload.__dict__, indent=2)}")
+        logger.debug(f"Payload\n{json.dumps(payload.__dict__, indent=2)}") if payload else None
         # endregion
         self.response_not_decoded = self.session.request(
             method=self.method if self.method else method,
             # method=method,
             url=url,
-            params=payload.__dict__ if method == "GET" else None,
-            data=payload.__dict__ if method != "GET" else None)
+            params=payload.__dict__ if method == "GET" and payload else None,
+            data=payload.__dict__ if method != "GET" and payload else None)
         if self.request_parameters.deserialize and self.deserialize:
-            self.deserialize_response(self.request_parameters.deserialize_to)
+            target_class = self.deserialize_to if self.deserialize_to else self.request_parameters.deserialize_to
+            self.deserialize_response(target_class)
+            # self.deserialize_response(self.request_parameters.deserialize_to) if
         else:
             self.response_decoded = self.response_not_decoded
         self.assert_status_code(
@@ -79,8 +82,9 @@ class HTTPWrapper:
         return self.send_request(method="PUT")
 
     def assert_status_code(self, expected_status_code: HTTPStatus):
-        logger.debug(f"ASSERTION {self.response_not_decoded.status_code} vs {expected_status_code}")
+        logger.debug(f"HTTP WRAPPER ASSERTION Actual status code: {self.response_not_decoded.status_code} vs Expected status code: {expected_status_code}")
         assert self.response_not_decoded.status_code == expected_status_code
 
     def deserialize_response(self, target_data_class: dataclass):
+        logger.debug(f"Deserialization to {self.request_parameters.deserialize_to}")
         self.response_decoded = target_data_class(**self.response_not_decoded.json())

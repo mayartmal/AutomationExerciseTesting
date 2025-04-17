@@ -1,6 +1,6 @@
 from dataclasses import dataclass, InitVar
 from http import HTTPStatus
-from typing import Any
+from typing import Any, List
 
 
 @dataclass
@@ -60,6 +60,22 @@ class CredentialsWithUpdates:
 class GeneralResponse:
     responseCode: HTTPStatus
     message: str
+
+
+@dataclass
+class Brand:
+    id: int
+    brand: str
+
+
+
+@dataclass
+class BrandsResponse:
+    responseCode: HTTPStatus
+    brands: List[Brand]
+
+    def __post_init__(self):
+        self.brands = [Brand(**brand_item) for brand_item in self.brands]
 
 
 @dataclass

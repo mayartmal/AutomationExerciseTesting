@@ -51,9 +51,20 @@ class BaseService(HTTPWrapper):
         self.method = None
         return self
 
+    def no_deserialize(self):
+        self.deserialize = False
+        return self
+    def reset_no_deserialize(self):
+        self.deserialize = True
+        return False
 
-    # def erase_password(self):
-    #     self.request_parameters.payload.password = "empty"
-    #     return self
+    def override_deserialization_to(self, class_name: dataclass):
+        self.deserialize_to = class_name
+        return self
+
+    def reset_deserialization_to(self):
+        self.deserialize_to = None
+        return self
+
 
 
