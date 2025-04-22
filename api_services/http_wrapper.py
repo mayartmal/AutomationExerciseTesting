@@ -31,6 +31,7 @@ class HTTPWrapper:
         self.deserialize: bool = True
         # self.password = None
         self.method: Optional[str] = None
+        self.none_payload = None
 
     def send_request(self, method: str):
         """
@@ -41,18 +42,23 @@ class HTTPWrapper:
 
         """
         url = f"{self.BASE_URL}{self.request_parameters.endpoint}"
-        payload = self.request_parameters.payload
+        if self.none_payload:
+            payload = None
+        else:
+            payload = self.request_parameters.payload
         # region request logging
         logger.debug(f"---- Sending {method.upper()} request to {url} ----")
         logger.debug(f"Payload dataclass is {type(payload)}")
         logger.debug(f"Payload\n{json.dumps(payload.__dict__, indent=2)}") if payload else None
         # endregion
+        # get raw request
         self.response_not_decoded = self.session.request(
             method=self.method if self.method else method,
             # method=method,
             url=url,
             params=payload.__dict__ if method == "GET" and payload else None,
             data=payload.__dict__ if method != "GET" and payload else None)
+        # deserialize if it needed
         if self.request_parameters.deserialize and self.deserialize:
             target_class = self.deserialize_to if self.deserialize_to else self.request_parameters.deserialize_to
             self.deserialize_response(target_class)

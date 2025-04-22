@@ -2,7 +2,7 @@ from dataclasses import dataclass, InitVar
 from http import HTTPStatus
 from typing import Any, List
 
-
+# general request
 @dataclass
 class RequestParameters:
     endpoint: str
@@ -12,6 +12,15 @@ class RequestParameters:
     deserialize: bool
 
 
+
+# general response
+@dataclass
+class GeneralResponse:
+    responseCode: HTTPStatus
+    message: str
+
+
+# region payloads dataclasses
 @dataclass
 class User:
     name: str = None
@@ -31,6 +40,10 @@ class User:
     state: str = "ND"
     city: str = "ND"
     mobile_number: str = "555 111 333"
+# add test for fields (req, not req)
+# add tests for password
+
+
 
 
 @dataclass
@@ -57,16 +70,19 @@ class CredentialsWithUpdates:
 
 
 @dataclass
-class GeneralResponse:
-    responseCode: HTTPStatus
-    message: str
+class SearchProduct:
+    search_product: str
+
+# endregion
 
 
+
+
+# region brands response
 @dataclass
 class Brand:
     id: int
     brand: str
-
 
 
 @dataclass
@@ -76,8 +92,45 @@ class BrandsResponse:
 
     def __post_init__(self):
         self.brands = [Brand(**brand_item) for brand_item in self.brands]
+# endregion
+
+# region products response
+@dataclass
+class UserType:
+    usertype: str
 
 
+@dataclass
+class Category:
+    usertype: UserType
+    category: str
+
+    def __post_init__(self):
+        self.usertype = UserType(**self.usertype)
+
+
+@dataclass
+class Product:
+    id: int
+    name: str
+    price: str
+    brand: str
+    category: Category
+
+    def __post_init__(self):
+        self.category = Category(**self.category)
+
+
+@dataclass
+class ProductsResponse:
+    responseCode: HTTPStatus
+    products: List[Product]
+
+    def __post_init__(self):
+        self.products = [Product(**product_item) for product_item in self.products]
+# endregion
+
+# region user response
 @dataclass
 class UserData:
     id: int
@@ -105,3 +158,4 @@ class UserDataResponse:
 
     def __post_init__(self):
         self.user = UserData(**self.user)
+# endregion

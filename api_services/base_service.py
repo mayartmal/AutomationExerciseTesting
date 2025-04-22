@@ -21,12 +21,12 @@ class BaseService(HTTPWrapper):
                       endpoint: str,
                       payload: Any,
                       expected_code: HTTPStatus,
-                      decode_to: dataclass,
+                      deserialize_to: dataclass,
                       deserialize: bool = True):
         self.request_parameters = RequestParameters(endpoint=endpoint,
                                                     payload=payload,
                                                     expected_code=expected_code,
-                                                    deserialize_to=decode_to,
+                                                    deserialize_to=deserialize_to,
                                                     deserialize=deserialize)
         return self
 
@@ -62,8 +62,16 @@ class BaseService(HTTPWrapper):
         self.deserialize_to = class_name
         return self
 
-    def reset_deserialization_to(self):
+    def reset_deserialization(self):
         self.deserialize_to = None
+        return self
+
+    def override_payload_with_none(self):
+        self.none_payload = True
+        return self
+
+    def reset_none_payload(self):
+        self.none_payload = False
         return self
 
 

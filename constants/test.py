@@ -24,6 +24,7 @@ class ExpectedMessages:
     USER_NOT_FOUND = "User not found!"
     BAD_VERIFY_REQUEST = "Bad request, email or password parameter is missing in POST request."
     UNSUPPORTED_METHOD = "This request method is not supported."
+    MISSING_SEARCH_PARAMETER = "Bad request, search_product parameter is missing in POST request."
 
 class Payloads:
     USER_VITUS_BERING = User(name="vitus_bering",

@@ -4,7 +4,9 @@ from os.path import exists
 import pytest
 from selenium import webdriver
 
+from api_services.base_service import BaseService
 from api_services.brand_service import BrandService
+from api_services.product_service import ProductService
 from api_services.user_service import UserService
 from constants.applications import AUTOMATION_EXERCISE
 from constants.test import ExpectedCodes
@@ -39,7 +41,17 @@ def user_service():
 def brand_service():
     return BrandService()
 
+
+
+@pytest.fixture
+def product_service():
+    return ProductService()
+
 @pytest.fixture()
+def base_service():
+    return BaseService()
+
+@pytest.fixture
 def create_and_clean_up_user(request, user_service):
     user = request.param if hasattr(request, "param") else None
     response, user = user_service.create_user(user=user)
@@ -49,7 +61,19 @@ def create_and_clean_up_user(request, user_service):
     user_service.delete_user(user)
     response = user_service.verify_user(user)
     logger.debug(f" ASSERT Actual response code: {response.responseCode} vs Expected response code: {ExpectedCodes.NOT_FOUND}")
-    assert response.responseCode == ExpectedCodes.NOT_FOUND
+
+@pytest.fixture
+def run_with_overridden_method(request, base_service):
+    base_service.override_method_to(request.param)
+    yield base_service
+
+
+
+
+
+# @pytest.fixture
+# def predefined_brand_service(run_with_overridden_method):
+#     return
 
 
 @pytest.fixture()

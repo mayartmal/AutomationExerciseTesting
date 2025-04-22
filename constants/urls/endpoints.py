@@ -15,4 +15,6 @@ class Endpoints:
     # endregion
 
     # region Products
+    PRODUCT_GET_LIST = "/api/productsList"
+    PRODUCT_SEARCH = "/api/searchProduct"
     # endregion

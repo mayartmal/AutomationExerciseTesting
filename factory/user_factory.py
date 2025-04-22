@@ -7,6 +7,8 @@ class UserFactory:
 
     @staticmethod
     def generate_create_user_payload() -> User:
+    # username: external param from fixture params
+    # try different combinations
         user_name = generate_user_name_with_time_postfix(UserRelated.TEST_USER_BASE_NAME)
         email = f"{user_name}{UserRelated.TEST_MAIL_DOMAIN}"
         user = User(name=user_name, email=email)
@@ -44,4 +46,3 @@ class UserFactory:
             password=user.password,
             dynamic_field=(field_to_update, field_new_value)
         )
-
