@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from api_services.brand_service import BrandService
+from api_services.product_service import ProductService
 from models.common import Credentials, User, Email
 
 
@@ -20,6 +21,15 @@ class BrandRelated:
         {"service_class": BrandService, "method": "PUT"},
         {"service_class": BrandService, "method": "DELETE"}
     ]
+
+
+class ProductRelated:
+    WRONG_METHODS_FOR_GET_ALL_PRODUCTS = [
+        {"service_class": ProductService, "method": "POST"},
+        {"service_class": ProductService, "method": "PUT"},
+        {"service_class": ProductService, "method": "DELETE"}
+    ]
+    PRODUCT_TO_SEARCH = "tshirt"
 
 
 class ExpectedCodes:

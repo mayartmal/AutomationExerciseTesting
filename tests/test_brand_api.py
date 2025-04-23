@@ -18,7 +18,7 @@ class TestBrandAPI:
     @pytest.mark.parametrize("run_service_with_overridden_method",
                              BrandRelated.WRONG_METHODS_FOR_GET_ALL_BRANDS,
                              indirect=True)
-    def test_get_all_brand_with_wrong_methods(self, run_service_with_overridden_method):
+    def test_get_all_brands_with_wrong_methods(self, run_service_with_overridden_method):
         brand_service = run_service_with_overridden_method
         response = brand_service.override_deserialization_to(GeneralResponse).get_all_brands()
         brand_service.reset_deserialization()
