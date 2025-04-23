@@ -1,3 +1,5 @@
+from pickle import FALSE
+
 import pytest
 
 from constants.test import ExpectedCodes, ExpectedMessages, ProductRelated
@@ -24,11 +26,13 @@ class TestProductAPI:
         assert response.responseCode == ExpectedCodes.UNSUPPORTED_METHOD
         assert response.message == ExpectedMessages.UNSUPPORTED_METHOD
 
-    def test_search_product(self, product_service):
-        response = product_service.search_product(search_string=ProductRelated.PRODUCT_TO_SEARCH)
+    @pytest.mark.parametrize("product_searching", ProductRelated.TSHIRT_STRINGS_IN_DIFFERENT_CASES, indirect=True)
+    def test_search_product(self, product_searching):
+        response, input_param = product_searching
         assert len(response.products) > 0
         for product in response.products:
-            assert ProductRelated.PRODUCT_TO_SEARCH in product.category.category.lower()
+            assert input_param.lower() in product.category.category.lower()
+
 
     def test_search_product_without_search_parameter(self, product_service):
         response = product_service.override_payload_with_none().override_deserialization_to(

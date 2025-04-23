@@ -29,7 +29,12 @@ class ProductRelated:
         {"service_class": ProductService, "method": "PUT"},
         {"service_class": ProductService, "method": "DELETE"}
     ]
-    PRODUCT_TO_SEARCH = "tshirt"
+    TSHIRT_STRINGS_IN_DIFFERENT_CASES = [
+        "tshirt",
+        "Tshirt",
+        "TSHIRT",
+        "TsHiRt"
+    ]
 
 
 class ExpectedCodes:
