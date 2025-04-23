@@ -1,5 +1,8 @@
 from http import HTTPStatus
+
+from api_services.brand_service import BrandService
 from models.common import Credentials, User, Email
+
 
 class Common:
     NEW_COMPANY = ["company", "new_work"]
@@ -9,6 +12,15 @@ class Common:
 class UserRelated:
     TEST_MAIL_DOMAIN = "@test.tt"
     TEST_USER_BASE_NAME = "user"
+
+
+class BrandRelated:
+    WRONG_METHODS_FOR_GET_ALL_BRANDS = [
+        {"service_class": BrandService, "method": "POST"},
+        {"service_class": BrandService, "method": "PUT"},
+        {"service_class": BrandService, "method": "DELETE"}
+    ]
+
 
 class ExpectedCodes:
     CREATED = HTTPStatus.CREATED
@@ -26,24 +38,25 @@ class ExpectedMessages:
     UNSUPPORTED_METHOD = "This request method is not supported."
     MISSING_SEARCH_PARAMETER = "Bad request, search_product parameter is missing in POST request."
 
+
 class Payloads:
     USER_VITUS_BERING = User(name="vitus_bering",
-                             email = "vitus_bering@kostava43.ge",
-                             password = "PassWord1@",
-                             title = "Mr",
-                             birth_date = "12",
-                             birth_month = "8",
-                             birth_year = "1981",
-                             firstname = "Vitus",
-                             lastname = "Bering",
-                             company = "UCS",
-                             address1 = "owl st. 11",
-                             address2 = "far st. 27",
-                             country = "India",
-                             zipcode = "0111",
-                             state = "ND",
-                             city = "ND",
-                             mobile_number = "555 111 333")
+                             email="vitus_bering@kostava43.ge",
+                             password="PassWord1@",
+                             title="Mr",
+                             birth_date="12",
+                             birth_month="8",
+                             birth_year="1981",
+                             firstname="Vitus",
+                             lastname="Bering",
+                             company="UCS",
+                             address1="owl st. 11",
+                             address2="far st. 27",
+                             country="India",
+                             zipcode="0111",
+                             state="ND",
+                             city="ND",
+                             mobile_number="555 111 333")
 
     VALID_VITUS_BERING_CREDENTIALS = Credentials(email="vitus_bering@kostava43.ge",
                                                  password="PassWord1@")
@@ -52,10 +65,6 @@ class Payloads:
                                                           password="wrong_password")
 
     EMAIL_VITUS_BERING = Email(email="vitus_bering@kostava43.ge")
-
-
-
-
 
 # region obsolete
 
