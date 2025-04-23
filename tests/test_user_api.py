@@ -6,14 +6,8 @@ from factory.user_factory import UserFactory
 
 class TestUserAPI:
 
-    # make log fixture autouse
     def test_create_generated_user(self, create_and_clean_up_user):
-        # Given: a user does not exist yet
-
-        # When: we create the user
         response, _ = create_and_clean_up_user
-
-        # Then: the response message should indicate the user was successfully created
         assert response.message == ExpectedMessages.USER_CREATED
 
 
