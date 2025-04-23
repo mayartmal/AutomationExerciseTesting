@@ -1,3 +1,6 @@
+from http.client import responses
+from typing import cast
+
 import pytest
 
 from api_services.brand_service import BrandService
@@ -22,17 +25,17 @@ class TestBrandAPI:
             assert isinstance(brand.brand, str)
 
 
-    def test_get_all_brand_with_wrong_method(self, brand_service):
-        response = brand_service.override_method_to("POST").override_deserialization_to(GeneralResponse).get_all_brands()
+    @pytest.mark.parametrize("run_service_with_overridden_method", [
+        {"service_class": BrandService, "method": "POST"},
+        {"service_class": BrandService, "method": "PUT"},
+        {"service_class": BrandService, "method": "DELETE"}
+        ], indirect=True)
+    def test_get_all_brand_with_wrong_methods(self, run_service_with_overridden_method):
+        brand_service = run_service_with_overridden_method
+        response = brand_service.override_deserialization_to(GeneralResponse).get_all_brands()
         brand_service.reset_deserialization()
         assert response.responseCode == ExpectedCodes.UNSUPPORTED_METHOD
         assert response.message == ExpectedMessages.UNSUPPORTED_METHOD
-
-    # @pytest.mark.parametrize("run_with_overridden_method", ["POST", "PUT", "DELETE"], indirect=True)
-    # def test_get_all_brand_with_wrong_methods(self, run_with_overridden_method):
-    #     brand_service = BrandService(run_with_overridden_method)
-    #     print("ALLLERT")
-    #     print(brand_service.method)
 
 
 

@@ -1,5 +1,6 @@
 import logging
 from os.path import exists
+from typing import Type
 
 import pytest
 from selenium import webdriver
@@ -63,9 +64,13 @@ def create_and_clean_up_user(request, user_service):
     logger.debug(f" ASSERT Actual response code: {response.responseCode} vs Expected response code: {ExpectedCodes.NOT_FOUND}")
 
 @pytest.fixture
-def run_with_overridden_method(request, base_service):
-    base_service.override_method_to(request.param)
-    yield base_service
+def run_service_with_overridden_method(request):
+    service_class = request.param['service_class']
+    service = service_class()
+    service.override_method_to(request.param['method'])
+    yield service
+    service.reset_method()
+
 
 
 
